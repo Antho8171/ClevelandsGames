@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cleveland's Games — Fortune Exclusive</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #C9A84C;
+  --gold-light: #F0D080;
+  --gold-bright: #FFE566;
+  --gold-dark: #7A5C1E;
+  --gold-muted: rgba(201,168,76,0.15);
+  --black: #08070A;
+  --black-soft: #0E0C10;
+  --black-card: #13111A;
+  --black-hover: #1A1724;
+  --text: #EDE8D5;
+  --text-muted: #6B6045;
+  --text-dim: #3A3228;
+  --error: #E07070;
+  --success: #6FCB8A;
+  --border: rgba(201,168,76,0.25);
+  --border-hover: rgba(201,168,76,0.5);
+  --radius: 6px;
+  --shadow-gold: 0 0 30px rgba(201,168,76,0.12);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--black);
+  color:var(--text);
+  font-family:'Cormorant Garamond',serif;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* BG pattern */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:
+    repeating-linear-gradient(60deg,transparent,transparent 60px,rgba(201,168,76,0.018) 60px,rgba(201,168,76,0.018) 61px),
+    repeating-linear-gradient(-60deg,transparent,transparent 60px,rgba(201,168,76,0.018) 60px,rgba(201,168,76,0.018) 61px);
+  pointer-events:none;z-index:0;
+}
+body::after{
+  content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(201,168,76,0.04) 0%,transparent 70%),
+    radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,0.6) 100%);
+  pointer-events:none;z-index:0;
+}
+
+/* ─── SCREENS ─────────────────────────────────────────────── */
+.screen{display:none;position:relative;z-index:1;}
+.screen.active{display:block;}
+
+/* ─── SHARED COMPONENTS ──────────────────────────────────── */
+.logo-mark{
+  text-align:center;
+  padding: 40px 0 20px;
+  user-select:none;
+}
+.logo-crown{
+  font-size:2.8rem;
+  filter:drop-shadow(0 0 14px rgba(201,168,76,0.7));
+  animation:crownPulse 3s ease-in-out infinite;
+  display:block;margin-bottom:8px;
+}
+@keyframes crownPulse{
+  0%,100%{filter:drop-shadow(0 0 14px rgba(201,168,76,0.7));}
+  50%{filter:drop-shadow(0 0 28px rgba(240,208,128,1));}
+}
+.logo-title{
+  font-family:'Cinzel',serif;
+  font-size:clamp(1.8rem,4vw,3rem);
+  font-weight:700;
+  background:linear-gradient(135deg,var(--gold-dark) 0%,var(--gold-light) 40%,var(--gold-bright) 55%,var(--gold) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  letter-spacing:.12em;text-transform:uppercase;line-height:1;
+}
+.logo-sub{
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;font-weight:300;
+  color:var(--gold);opacity:.7;
+  letter-spacing:.3em;font-size:.95rem;
+  margin-top:6px;
+}
+.divider{
+  display:flex;align-items:center;gap:14px;
+  max-width:320px;margin:16px auto;
+}
+.divider-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.divider-gem{color:var(--gold);font-size:.9rem;}
+
+/* Cards / panels */
+.panel{
+  background:linear-gradient(160deg,#1a1620 0%,#0e0c14 60%,#0a080e 100%);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  position:relative;overflow:hidden;
+}
+.panel::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--gold-dark),var(--gold-light),var(--gold-bright),var(--gold-light),var(--gold-dark),transparent);
+}
+
+/* Form elements */
+.form-group{margin-bottom:18px;}
+.form-label{
+  display:block;
+  font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:7px;font-weight:500;
+}
+.form-input{
+  width:100%;padding:12px 16px;
+  background:rgba(0,0,0,0.4);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  color:var(--text);
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.05rem;
+  transition:border-color .2s,box-shadow .2s;
+  outline:none;
+}
+.form-input:focus{
+  border-color:var(--gold);
+  box-shadow:0 0 0 2px rgba(201,168,76,0.12);
+}
+.form-input::placeholder{color:var(--text-dim);font-style:italic;}
+.form-error{color:var(--error);font-size:.85rem;margin-top:5px;font-style:italic;}
+.form-hint{color:var(--text-muted);font-size:.85rem;margin-top:5px;font-style:italic;}
+
+/* Buttons */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:13px 28px;border-radius:var(--radius);
+  font-family:'Cinzel',serif;font-size:.85rem;
+  letter-spacing:.15em;text-transform:uppercase;
+  cursor:pointer;border:none;transition:all .25s;
+  font-weight:600;
+}
+.btn-gold{
+  background:linear-gradient(135deg,var(--gold-dark),var(--gold),var(--gold-light));
+  color:var(--black);
+}
+.btn-gold:hover{
+  background:linear-gradient(135deg,var(--gold),var(--gold-light),var(--gold-bright));
+  box-shadow:0 4px 20px rgba(201,168,76,0.3);transform:translateY(-1px);
+}
+.btn-outline{
+  background:transparent;
+  border:1px solid var(--border);
+  color:var(--gold);
+}
+.btn-outline:hover{border-color:var(--gold);background:var(--gold-muted);}
+.btn-danger{
+  background:rgba(200,80,80,0.15);
+  border:1px solid rgba(200,80,80,0.3);
+  color:#E07070;
+}
+.btn-danger:hover{background:rgba(200,80,80,0.25);}
+.btn-full{width:100%;}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none !important;}
+
+/* Password generator */
+.pwd-box{
+  display:flex;gap:8px;align-items:center;
+}
+.pwd-box .form-input{flex:1;}
+.pwd-gen-btn{
+  padding:12px 14px;background:var(--gold-muted);border:1px solid var(--border);
+  border-radius:var(--radius);color:var(--gold);cursor:pointer;
+  font-size:1rem;transition:all .2s;white-space:nowrap;
+}
+.pwd-gen-btn:hover{background:rgba(201,168,76,0.25);border-color:var(--gold);}
+
+/* Toast */
+#toast{
+  position:fixed;bottom:28px;left:50%;
+  transform:translateX(-50%) translateY(120px);
+  background:linear-gradient(135deg,#1e1a12,#2a2210);
+  border:1px solid var(--gold);
+  color:var(--gold-light);
+  font-family:'Cinzel',serif;font-size:.85rem;
+  padding:13px 28px;border-radius:var(--radius);
+  box-shadow:0 8px 40px rgba(0,0,0,.7),0 0 30px rgba(201,168,76,.2);
+  z-index:9999;
+  transition:transform .4s cubic-bezier(.34,1.56,.64,1);
+  text-align:center;max-width:90vw;
+}
+#toast.show{transform:translateX(-50%) translateY(0);}
+
+/* Sparkle */
+@keyframes sparkle{0%{transform:scale(0) rotate(0);opacity:1;}100%{transform:scale(2) rotate(200deg);opacity:0;}}
+.sparkle{position:fixed;pointer-events:none;animation:sparkle .9s ease-out forwards;z-index:10000;font-size:1.1rem;}
+
+/* ─────────────────────────────────────────────────────────── */
+/* AUTH SCREEN                                                 */
+/* ─────────────────────────────────────────────────────────── */
+#screen-auth{
+  min-height:100vh;
+  display:none;
+  align-items:center;justify-content:center;
+  padding:20px;
+}
+#screen-auth.active{display:flex;}
+.auth-box{
+  width:100%;max-width:440px;
+  padding:40px;
+}
+.auth-tabs{
+  display:flex;gap:0;
+  margin-bottom:32px;
+  border:1px solid var(--border);
+  border-radius:var(--radius);overflow:hidden;
+}
+.auth-tab{
+  flex:1;padding:12px;text-align:center;cursor:pointer;
+  font-family:'Cinzel',serif;font-size:.8rem;letter-spacing:.15em;
+  background:transparent;color:var(--text-muted);
+  transition:all .2s;border:none;
+  text-transform:uppercase;
+}
+.auth-tab.active{background:var(--gold-muted);color:var(--gold-light);border-bottom:2px solid var(--gold);}
+.auth-tab:hover:not(.active){color:var(--gold);}
+.auth-form{display:none;}
+.auth-form.active{display:block;}
+
+/* ─────────────────────────────────────────────────────────── */
+/* MAIN GAME SCREEN                                            */
+/* ─────────────────────────────────────────────────────────── */
+#screen-game{min-height:100vh;}
+.game-nav{
+  position:sticky;top:0;z-index:50;
+  background:rgba(8,7,10,0.92);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:0 30px;
+  display:flex;align-items:center;justify-content:space-between;
+  height:64px;
+}
+.nav-logo{
+  font-family:'Cinzel',serif;font-size:1rem;font-weight:700;
+  background:linear-gradient(90deg,var(--gold-dark),var(--gold-light));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  letter-spacing:.15em;
+}
+.nav-right{display:flex;align-items:center;gap:16px;}
+.nav-user{
+  font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.1em;
+  color:var(--text-muted);
+}
+.nav-balance{
+  font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;
+  color:var(--gold-light);
+  text-shadow:0 0 16px rgba(201,168,76,.4);
+}
+.nav-btn{
+  padding:7px 16px;font-size:.7rem;
+}
+
+.game-hero{
+  text-align:center;
+  padding:50px 20px 30px;
+}
+.game-hero h2{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.4rem,3vw,2rem);
+  font-style:italic;color:var(--gold);
+  letter-spacing:.05em;margin-bottom:8px;
+}
+.game-hero p{color:var(--text-muted);font-size:1rem;font-style:italic;}
+
+.stats-bar{
+  display:flex;justify-content:center;flex-wrap:wrap;gap:16px;
+  padding:0 20px 40px;
+}
+.stat-chip{
+  padding:10px 22px;
+  background:rgba(201,168,76,0.05);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  text-align:center;min-width:140px;
+}
+.stat-chip .val{
+  font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;
+  color:var(--gold-light);display:block;
+}
+.stat-chip .lbl{
+  font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+/* Tickets grid */
+.tickets-section{padding:0 20px 60px;max-width:1200px;margin:0 auto;}
+.section-heading{
+  font-family:'Cinzel',serif;font-size:1rem;letter-spacing:.25em;text-transform:uppercase;
+  color:var(--gold);text-align:center;margin-bottom:28px;opacity:.8;
+}
+.tickets-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:24px;
+}
+
+/* ── Ticket card ── */
+.ticket-card{
+  background:linear-gradient(150deg,#1a1620 0%,#100e18 60%,#0a0810 100%);
+  border:1px solid var(--border);
+  border-radius:8px;
+  overflow:hidden;
+  transition:transform .3s,box-shadow .3s;
+  position:relative;
+}
+.ticket-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--gold-dark),var(--gold-light),var(--gold-dark),transparent);
+}
+.ticket-card:hover{
+  transform:translateY(-5px);
+  box-shadow:0 16px 48px rgba(201,168,76,.12),0 0 0 1px rgba(201,168,76,.2);
+}
+.ticket-head{
+  padding:20px 20px 14px;
+  display:flex;justify-content:space-between;align-items:flex-start;
+  border-bottom:1px solid rgba(201,168,76,.1);
+}
+.ticket-icon{font-size:2rem;filter:drop-shadow(0 0 8px rgba(201,168,76,.5));}
+.ticket-title{
+  font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;
+  color:var(--gold-light);line-height:1.2;
+}
+.ticket-tier{
+  font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--text-muted);margin-top:2px;
+}
+.ticket-badge{
+  background:linear-gradient(135deg,var(--gold-dark),var(--gold));
+  color:var(--black);font-family:'Cinzel',serif;
+  font-size:.8rem;font-weight:700;
+  padding:4px 12px;border-radius:2px;white-space:nowrap;
+}
+.ticket-body{padding:16px 20px;}
+.ticket-desc{
+  font-style:italic;color:var(--text-muted);font-size:.95rem;
+  line-height:1.5;margin-bottom:12px;
+}
+.ticket-maxwin{
+  font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--text-dim);margin-bottom:16px;
+}
+.ticket-maxwin span{color:var(--gold);font-weight:600;}
+
+/* Scratch zone */
+.scratch-wrap{
+  position:relative;border-radius:4px;overflow:hidden;
+  border:1px solid rgba(201,168,76,.15);
+  background:linear-gradient(135deg,#0e0c14,#1a1620);
+}
+.scratch-reveal{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#0e0c14,#1a1620);
+}
+.reveal-emoji{font-size:2rem;margin-bottom:5px;}
+.reveal-amount{
+  font-family:'Playfair Display',serif;font-weight:900;
+  font-size:1.8rem;
+  background:linear-gradient(135deg,var(--gold-dark),var(--gold-bright));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.reveal-label{
+  font-size:.75rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--text-muted);margin-top:4px;
+}
+.scratch-canvas{display:block;cursor:crosshair;touch-action:none;}
+.scratch-hint{
+  text-align:center;font-style:italic;
+  color:rgba(201,168,76,.35);font-size:.78rem;
+  margin-top:6px;letter-spacing:.08em;
+}
+
+.ticket-footer{padding:0 20px 20px;}
+.buy-ticket-btn{
+  width:100%;padding:12px;
+  background:linear-gradient(135deg,rgba(201,168,76,.06),rgba(201,168,76,.02));
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  color:var(--gold-light);
+  font-family:'Cinzel',serif;font-size:.78rem;font-weight:600;
+  letter-spacing:.2em;text-transform:uppercase;
+  cursor:pointer;transition:all .25s;
+}
+.buy-ticket-btn:hover:not(:disabled){
+  border-color:var(--gold);
+  background:rgba(201,168,76,.1);
+  box-shadow:0 0 20px rgba(201,168,76,.1);
+}
+.buy-ticket-btn:disabled{opacity:.35;cursor:not-allowed;}
+
+/* History */
+.history-section{
+  max-width:900px;margin:0 auto 60px;
+  padding:0 20px;
+}
+.history-list{
+  display:flex;flex-direction:column;gap:6px;
+  max-height:240px;overflow-y:auto;
+}
+.history-item{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:9px 16px;
+  background:rgba(201,168,76,.03);
+  border:1px solid rgba(201,168,76,.08);
+  border-radius:var(--radius);
+  font-size:.9rem;
+  animation:slideIn .3s ease;
+}
+@keyframes slideIn{from{opacity:0;transform:translateX(-8px);}to{opacity:1;transform:translateX(0);}}
+.history-left{display:flex;gap:10px;align-items:center;}
+.history-ticket{color:var(--text-muted);font-style:italic;}
+.history-time{color:var(--text-dim);font-size:.75rem;}
+.history-prize{
+  font-family:'Playfair Display',serif;font-weight:700;
+  color:var(--gold-light);
+}
+.history-prize.big{color:var(--gold-bright);text-shadow:0 0 10px rgba(201,168,76,.5);}
+.history-prize.loss{color:var(--text-muted);}
+
+/* ─────────────────────────────────────────────────────────── */
+/* ADMIN SCREEN                                                */
+/* ─────────────────────────────────────────────────────────── */
+#screen-admin{min-height:100vh;padding-bottom:60px;}
+.admin-nav{
+  background:rgba(8,7,10,.95);backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(201,168,76,.4);
+  padding:0 30px;height:64px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:50;
+}
+.admin-badge{
+  background:linear-gradient(135deg,#4a1010,#6b1f1f);
+  border:1px solid rgba(200,80,80,.4);
+  color:#E07070;font-family:'Cinzel',serif;
+  font-size:.7rem;letter-spacing:.15em;
+  padding:3px 10px;border-radius:2px;margin-left:10px;
+}
+.admin-body{max-width:1200px;margin:0 auto;padding:40px 20px;}
+.admin-title{
+  font-family:'Cinzel',serif;font-size:1.8rem;font-weight:700;
+  color:var(--gold-light);margin-bottom:6px;letter-spacing:.08em;
+}
+.admin-sub{color:var(--text-muted);font-style:italic;margin-bottom:36px;}
+
+/* Admin stats */
+.admin-stats{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:16px;margin-bottom:40px;
+}
+.admin-stat{
+  padding:20px 24px;
+  background:linear-gradient(135deg,#1a1620,#0e0c18);
+  border:1px solid var(--border);border-radius:var(--radius);
+  position:relative;overflow:hidden;
+}
+.admin-stat::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+}
+.admin-stat .v{
+  font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;
+  color:var(--gold-light);display:block;margin-bottom:4px;
+}
+.admin-stat .l{
+  font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--text-muted);
+}
+
+/* Players table */
+.table-wrap{overflow-x:auto;border-radius:var(--radius);}
+table{width:100%;border-collapse:collapse;}
+thead{background:rgba(201,168,76,.07);}
+th{
+  padding:12px 16px;text-align:left;
+  font-family:'Cinzel',serif;font-size:.7rem;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--gold);
+  border-bottom:1px solid var(--border);
+}
+td{
+  padding:11px 16px;font-size:.95rem;
+  border-bottom:1px solid rgba(201,168,76,.05);
+  color:var(--text);
+}
+tr:hover td{background:rgba(201,168,76,.03);}
+.td-id{color:var(--text-muted);font-size:.8rem;font-family:monospace;}
+.td-balance{font-family:'Playfair Display',serif;font-weight:700;color:var(--gold-light);}
+.td-role-admin{
+  color:#E07070;font-size:.75rem;letter-spacing:.1em;
+  background:rgba(200,80,80,.1);padding:2px 8px;border-radius:2px;
+}
+.td-role-player{color:var(--text-muted);font-size:.75rem;}
+.table-actions{display:flex;gap:6px;}
+.action-btn{
+  padding:4px 10px;font-size:.7rem;font-family:'Cinzel',serif;
+  letter-spacing:.1em;border-radius:3px;cursor:pointer;border:1px solid;
+  transition:all .2s;
+}
+.action-add{color:var(--success);border-color:rgba(111,203,138,.3);background:rgba(111,203,138,.07);}
+.action-add:hover{background:rgba(111,203,138,.15);}
+.action-del{color:var(--error);border-color:rgba(224,112,112,.3);background:rgba(224,112,112,.07);}
+.action-del:hover{background:rgba(224,112,112,.15);}
+.action-admin{color:var(--gold);border-color:rgba(201,168,76,.3);background:rgba(201,168,76,.07);}
+.action-admin:hover{background:rgba(201,168,76,.15);}
+
+/* Modal */
+.modal-bg{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.75);backdrop-filter:blur(4px);
+  z-index:500;align-items:center;justify-content:center;padding:20px;
+}
+.modal-bg.open{display:flex;}
+.modal{
+  background:linear-gradient(160deg,#1a1620,#0e0c18);
+  border:1px solid var(--border);
+  border-radius:8px;padding:36px;
+  max-width:400px;width:100%;position:relative;
+}
+.modal h3{
+  font-family:'Cinzel',serif;font-size:1.1rem;color:var(--gold-light);
+  margin-bottom:20px;letter-spacing:.08em;
+}
+.modal-close{
+  position:absolute;top:14px;right:18px;
+  background:none;border:none;color:var(--text-muted);
+  font-size:1.2rem;cursor:pointer;
+}
+.modal-close:hover{color:var(--gold);}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--gold-dark);border-radius:2px;}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- AUTH SCREEN                                                  -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div id="screen-auth" class="screen">
+  <div class="auth-box panel">
+    <div class="logo-mark">
+      <span class="logo-crown">♛</span>
+      <div class="logo-title">Cleveland's Games</div>
+      <div class="logo-sub">Fortune Exclusive</div>
+    </div>
+    <div class="divider"><div class="divider-line"></div><div class="divider-gem">◆</div><div class="divider-line"></div></div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchTab('login')">Connexion</button>
+      <button class="auth-tab" onclick="switchTab('register')">Créer un compte</button>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <div id="form-login" class="auth-form active">
+      <div class="form-group">
+        <label class="form-label">Identifiant (ID)</label>
+        <input class="form-input" id="login-id" type="text" placeholder="Votre identifiant…">
+        <div class="form-error" id="login-id-err"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Mot de passe</label>
+        <input class="form-input" id="login-pwd" type="password" placeholder="Votre mot de passe…">
+        <div class="form-error" id="login-err"></div>
+      </div>
+      <button class="btn btn-gold btn-full" onclick="doLogin()" style="margin-top:8px;">
+        ◆ Se connecter
+      </button>
+    </div>
+
+    <!-- REGISTER FORM -->
+    <div id="form-register" class="auth-form">
+      <div class="form-group">
+        <label class="form-label">Nom & Prénom</label>
+        <input class="form-input" id="reg-name" type="text" placeholder="Ex: Martin Dupont">
+        <div class="form-error" id="reg-name-err"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Identifiant (ID)</label>
+        <input class="form-input" id="reg-id" type="text" placeholder="Choisissez un identifiant unique">
+        <div class="form-error" id="reg-id-err"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Âge</label>
+        <input class="form-input" id="reg-age" type="number" min="1" max="120" placeholder="Votre âge (21 ans minimum)">
+        <div class="form-error" id="reg-age-err"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Mot de passe</label>
+        <div class="pwd-box">
+          <input class="form-input" id="reg-pwd" type="text" placeholder="Mot de passe…" autocomplete="new-password">
+          <button class="pwd-gen-btn" onclick="generatePassword()" title="Générer un mot de passe sécurisé">🎲 Générer</button>
+        </div>
+        <div class="form-hint" id="pwd-hint">Conseil : utilisez le bouton pour générer un mot de passe sécurisé.</div>
+        <div class="form-error" id="reg-pwd-err"></div>
+      </div>
+      <div class="form-group" style="background:rgba(201,168,76,.04);border:1px solid rgba(201,168,76,.15);border-radius:var(--radius);padding:12px 16px;">
+        <p style="font-size:.8rem;color:var(--text-muted);font-style:italic;line-height:1.5;">
+          ⚠️ Notez votre mot de passe dans un endroit sûr. L'équipe Cleveland's Games ne pourra pas le récupérer pour vous.
+        </p>
+      </div>
+      <button class="btn btn-gold btn-full" onclick="doRegister()" style="margin-top:12px;">
+        ◆ Créer mon compte
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- GAME SCREEN                                                  -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div id="screen-game" class="screen">
+  <nav class="game-nav">
+    <div class="nav-logo">Cleveland's Games</div>
+    <div class="nav-right">
+      <div>
+        <div class="nav-user" id="nav-username">—</div>
+        <div class="nav-balance" id="nav-balance">$0.00</div>
+      </div>
+      <button class="btn btn-outline nav-btn" id="admin-nav-btn" onclick="goAdmin()" style="display:none;">⚙ Admin</button>
+      <button class="btn btn-outline nav-btn" onclick="doLogout()">Déconnexion</button>
+    </div>
+  </nav>
+
+  <div class="game-hero">
+    <h2>Bienvenue, <span id="hero-name">Joueur</span></h2>
+    <p>Grattez votre destin — chaque ticket est une chance unique.</p>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-chip"><span class="val" id="stat-balance">—</span><span class="lbl">Solde</span></div>
+    <div class="stat-chip"><span class="val" id="stat-won">$0.00</span><span class="lbl">Gains totaux</span></div>
+    <div class="stat-chip"><span class="val" id="stat-played">0</span><span class="lbl">Tickets joués</span></div>
+    <div class="stat-chip"><span class="val" id="stat-spent">$0.00</span><span class="lbl">Dépenses totales</span></div>
+  </div>
+
+  <div class="tickets-section">
+    <div class="section-heading">✦ Nos tickets exclusifs ✦</div>
+    <div class="tickets-grid" id="tickets-grid"></div>
+  </div>
+
+  <div class="history-section">
+    <div class="section-heading">✦ Historique de jeu ✦</div>
+    <div class="history-list" id="history-list">
+      <div style="text-align:center;color:var(--text-muted);font-style:italic;padding:24px;">Aucune partie jouée…</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- ADMIN SCREEN                                                 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div id="screen-admin" class="screen">
+  <nav class="admin-nav">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div class="nav-logo">Cleveland's Games</div>
+      <span class="admin-badge">ADMIN</span>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-outline nav-btn" onclick="showScreen('game')">← Retour au jeu</button>
+      <button class="btn btn-outline nav-btn" onclick="doLogout()">Déconnexion</button>
+    </div>
+  </nav>
+
+  <div class="admin-body">
+    <div class="admin-title">Panneau d'administration</div>
+    <div class="admin-sub">Vue d'ensemble de Cleveland's Games — Données en temps réel</div>
+
+    <div class="admin-stats" id="admin-stats"></div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+      <div class="section-heading" style="margin:0;">✦ Base de données joueurs ✦</div>
+      <button class="btn btn-outline" onclick="openAddFunds()">💰 Ajouter des fonds</button>
+    </div>
+
+    <div class="table-wrap panel" style="padding:0;">
+      <table id="players-table">
+        <thead>
+          <tr>
+            <th>Nom & Prénom</th>
+            <th>ID</th>
+            <th>Âge</th>
+            <th>Rôle</th>
+            <th>Solde</th>
+            <th>Tickets joués</th>
+            <th>Gains totaux</th>
+            <th>Dépenses totales</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="players-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Add funds -->
+<div class="modal-bg" id="modal-funds">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-funds')">✕</button>
+    <h3>💰 Ajouter des fonds</h3>
+    <div class="form-group">
+      <label class="form-label">Joueur (ID)</label>
+      <select class="form-input" id="funds-player-select" style="font-family:'Cormorant Garamond',serif;background:#0e0c18;"></select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Montant ($)</label>
+      <input class="form-input" id="funds-amount" type="number" min="1" placeholder="Ex: 10000">
+    </div>
+    <button class="btn btn-gold btn-full" onclick="addFundsToPlayer()">Ajouter les fonds</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// DATABASE (localStorage)
+// ══════════════════════════════════════════════════════════════
+const DB_KEY = 'cg_users';
+const SESSION_KEY = 'cg_session';
+
+function getDB() {
+  try { return JSON.parse(localStorage.getItem(DB_KEY)) || {}; }
+  catch { return {}; }
+}
+function saveDB(db) { localStorage.setItem(DB_KEY, JSON.stringify(db)); }
+function getSession() {
+  try { return JSON.parse(localStorage.getItem(SESSION_KEY)); }
+  catch { return null; }
+}
+function saveSession(user) { localStorage.setItem(SESSION_KEY, JSON.stringify(user)); }
+function clearSession() { localStorage.removeItem(SESSION_KEY); }
+
+// Seed admin if no DB
+function initDB() {
+  const db = getDB();
+  if (!db['admin']) {
+    db['admin'] = {
+      id: 'admin',
+      name: 'Cleveland Admin',
+      age: 35,
+      password: 'ClevelandAdmin2024!',
+      role: 'admin',
+      balance: 999999,
+      totalWon: 0,
+      totalSpent: 0,
+      ticketsPlayed: 0,
+      history: [],
+      createdAt: new Date().toISOString()
+    };
+    saveDB(db);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════════════════════════════
+function switchTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', (tab==='login'&&i===0)||(tab==='register'&&i===1)));
+  document.getElementById('form-login').classList.toggle('active', tab==='login');
+  document.getElementById('form-register').classList.toggle('active', tab==='register');
+}
+
+function clearErr(id) { document.getElementById(id).textContent = ''; }
+function setErr(id, msg) { document.getElementById(id).textContent = msg; }
+
+function doLogin() {
+  ['login-id-err','login-err'].forEach(clearErr);
+  const id = document.getElementById('login-id').value.trim();
+  const pwd = document.getElementById('login-pwd').value;
+  if (!id) { setErr('login-id-err','Veuillez entrer votre identifiant.'); return; }
+  if (!pwd) { setErr('login-err','Veuillez entrer votre mot de passe.'); return; }
+
+  const db = getDB();
+  const user = db[id.toLowerCase()];
+  if (!user || user.password !== pwd) {
+    setErr('login-err','Identifiant ou mot de passe incorrect.'); return;
+  }
+  saveSession({ id: user.id });
+  enterApp(user);
+}
+
+function doRegister() {
+  ['reg-name-err','reg-id-err','reg-age-err','reg-pwd-err'].forEach(clearErr);
+  const name = document.getElementById('reg-name').value.trim();
+  const id = document.getElementById('reg-id').value.trim().toLowerCase();
+  const age = parseInt(document.getElementById('reg-age').value);
+  const pwd = document.getElementById('reg-pwd').value;
+
+  let ok = true;
+  if (!name || name.length < 3) { setErr('reg-name-err','Nom et prénom requis (min. 3 caractères).'); ok=false; }
+  if (!id || id.length < 3) { setErr('reg-id-err','Identifiant requis (min. 3 caractères).'); ok=false; }
+  else if (/[^a-z0-9_\-]/.test(id)) { setErr('reg-id-err','L\'identifiant ne peut contenir que des lettres, chiffres, - et _.'); ok=false; }
+  if (!age || isNaN(age)) { setErr('reg-age-err','Veuillez entrer votre âge.'); ok=false; }
+  else if (age < 21) { setErr('reg-age-err','Vous devez avoir au moins 21 ans pour jouer. (' + age + ' ans détecté)'); ok=false; }
+  else if (age > 120) { setErr('reg-age-err','Âge invalide.'); ok=false; }
+  if (!pwd || pwd.length < 8) { setErr('reg-pwd-err','Mot de passe requis (min. 8 caractères).'); ok=false; }
+  if (!ok) return;
+
+  const db = getDB();
+  if (db[id]) { setErr('reg-id-err','Cet identifiant est déjà pris.'); return; }
+
+  const user = {
+    id, name, age, password: pwd,
+    role: 'player',
+    balance: 50000,
+    totalWon: 0, totalSpent: 0, ticketsPlayed: 0,
+    history: [],
+    createdAt: new Date().toISOString()
+  };
+  db[id] = user;
+  saveDB(db);
+  saveSession({ id });
+  showToast('✦ Compte créé avec succès ! Bienvenue, ' + name.split(' ')[0] + ' !');
+  enterApp(user);
+}
+
+function doLogout() {
+  clearSession();
+  showScreen('auth');
+}
+
+// ══════════════════════════════════════════════════════════════
+// SCREENS
+// ══════════════════════════════════════════════════════════════
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+}
+
+function enterApp(user) {
+  if (user.role === 'admin') {
+    refreshAdmin();
+    showScreen('admin');
+  } else {
+    refreshGame(user);
+    showScreen('game');
+  }
+}
+
+function goAdmin() {
+  refreshAdmin();
+  showScreen('admin');
+}
+
+function refreshGame(user) {
+  document.getElementById('nav-username').textContent = user.name;
+  document.getElementById('hero-name').textContent = user.name.split(' ')[0];
+  document.getElementById('admin-nav-btn').style.display = user.role === 'admin' ? '' : 'none';
+  updateGameStats(user);
+  renderTickets();
+  renderHistory(user);
+}
+
+function currentUser() {
+  const sess = getSession();
+  if (!sess) return null;
+  const db = getDB();
+  return db[sess.id] || null;
+}
+
+function saveUser(user) {
+  const db = getDB();
+  db[user.id] = user;
+  saveDB(db);
+}
+
+function updateGameStats(user) {
+  const fmt = n => '$' + Number(n).toLocaleString('en-US', {minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById('nav-balance').textContent = fmt(user.balance);
+  document.getElementById('stat-balance').textContent = fmt(user.balance);
+  document.getElementById('stat-won').textContent = fmt(user.totalWon);
+  document.getElementById('stat-played').textContent = user.ticketsPlayed;
+  document.getElementById('stat-spent').textContent = fmt(user.totalSpent);
+}
+
+// ══════════════════════════════════════════════════════════════
+// PASSWORD GENERATOR
+// ══════════════════════════════════════════════════════════════
+function generatePassword() {
+  const upper='ABCDEFGHJKLMNPQRSTUVWXYZ';
+  const lower='abcdefghjkmnpqrstuvwxyz';
+  const nums='23456789';
+  const special='!@#$%&*?';
+  let pwd = '';
+  pwd += upper[Math.floor(Math.random()*upper.length)];
+  pwd += upper[Math.floor(Math.random()*upper.length)];
+  pwd += lower[Math.floor(Math.random()*lower.length)];
+  pwd += lower[Math.floor(Math.random()*lower.length)];
+  pwd += nums[Math.floor(Math.random()*nums.length)];
+  pwd += nums[Math.floor(Math.random()*nums.length)];
+  pwd += special[Math.floor(Math.random()*special.length)];
+  pwd += lower[Math.floor(Math.random()*lower.length)];
+  pwd += upper[Math.floor(Math.random()*upper.length)];
+  pwd += nums[Math.floor(Math.random()*nums.length)];
+  // shuffle
+  pwd = pwd.split('').sort(()=>Math.random()-.5).join('');
+  document.getElementById('reg-pwd').value = pwd;
+  document.getElementById('pwd-hint').innerHTML =
+    '🔑 Mot de passe généré : <strong style="color:var(--gold-light);letter-spacing:.05em;">' + pwd + '</strong> — Notez-le soigneusement !';
+  showToast('🎲 Mot de passe généré ! Notez-le.');
+}
+
+// ══════════════════════════════════════════════════════════════
+// TICKETS CONFIG (6 tickets)
+// ══════════════════════════════════════════════════════════════
+const TICKETS = [
+  {
+    id:'bronze', icon:'🥉', name:'Bronze Mystère', tier:'Entrée de gamme',
+    price:2000, desc:'Votre premier pas vers la fortune. Simple, élégant, prometteur.',
+    maxWin:'$15,000',
+    prizes:[
+      {label:'Rien',amount:0,weight:50},
+      {label:'+$500',amount:500,weight:18},
+      {label:'+$1,000',amount:1000,weight:13},
+      {label:'+$2,000',amount:2000,weight:9},
+      {label:'+$5,000',amount:5000,weight:6},
+      {label:'+$10,000',amount:10000,weight:3},
+      {label:'+$15,000',amount:15000,weight:1},
+    ]
+  },
+  {
+    id:'silver', icon:'🥈', name:'Argent Nocturne', tier:'Intermédiaire',
+    price:2500, desc:'L\'élégance de la nuit, les promesses de l\'aube.',
+    maxWin:'$25,000',
+    prizes:[
+      {label:'Rien',amount:0,weight:48},
+      {label:'+$500',amount:500,weight:14},
+      {label:'+$1,500',amount:1500,weight:12},
+      {label:'+$3,000',amount:3000,weight:10},
+      {label:'+$7,500',amount:7500,weight:7},
+      {label:'+$15,000',amount:15000,weight:6},
+      {label:'+$20,000',amount:20000,weight:2},
+      {label:'+$25,000',amount:25000,weight:1},
+    ]
+  },
+  {
+    id:'gold', icon:'🏅', name:'Or Impérial', tier:'Prestige',
+    price:3000, desc:'Le ticket préféré des esprits audacieux. L\'or appelle l\'or.',
+    maxWin:'$50,000',
+    prizes:[
+      {label:'Rien',amount:0,weight:45},
+      {label:'+$1,000',amount:1000,weight:14},
+      {label:'+$3,000',amount:3000,weight:12},
+      {label:'+$6,000',amount:6000,weight:10},
+      {label:'+$12,000',amount:12000,weight:8},
+      {label:'+$25,000',amount:25000,weight:6},
+      {label:'+$40,000',amount:40000,weight:3.5},
+      {label:'+$50,000',amount:50000,weight:1.5},
+    ]
+  },
+  {
+    id:'diamond', icon:'💎', name:'Diamant Royal', tier:'Élite',
+    price:3500, desc:'Pour ceux qui ne jouent que pour gagner grand.',
+    maxWin:'$100,000',
+    prizes:[
+      {label:'Rien',amount:0,weight:43},
+      {label:'+$1,500',amount:1500,weight:13},
+      {label:'+$4,000',amount:4000,weight:11},
+      {label:'+$8,000',amount:8000,weight:10},
+      {label:'+$20,000',amount:20000,weight:8},
+      {label:'+$40,000',amount:40000,weight:7},
+      {label:'+$75,000',amount:75000,weight:5},
+      {label:'+$100,000',amount:100000,weight:3},
+    ]
+  },
+  {
+    id:'platinum', icon:'👑', name:'Platine Suprême', tier:'Ultra Premium',
+    price:4500, desc:'Le ticket d\'exception. Réservé aux plus téméraires.',
+    maxWin:'$250,000',
+    prizes:[
+      {label:'Rien',amount:0,weight:40},
+      {label:'+$2,000',amount:2000,weight:12},
+      {label:'+$5,000',amount:5000,weight:11},
+      {label:'+$12,000',amount:12000,weight:10},
+      {label:'+$30,000',amount:30000,weight:9},
+      {label:'+$75,000',amount:75000,weight:8},
+      {label:'+$150,000',amount:150000,weight:6},
+      {label:'+$250,000',amount:250000,weight:4},
+    ]
+  },
+  {
+    id:'black', icon:'🖤', name:'Black Diamond', tier:'Légende — Exclusif',
+    price:5000, desc:'Le Graal. Un ticket qui change des destins. Vous y êtes prêt ?',
+    maxWin:'$500,000',
+    prizes:[
+      {label:'Rien',amount:0,weight:38},
+      {label:'+$2,500',amount:2500,weight:11},
+      {label:'+$7,500',amount:7500,weight:10},
+      {label:'+$20,000',amount:20000,weight:10},
+      {label:'+$50,000',amount:50000,weight:9},
+      {label:'+$100,000',amount:100000,weight:8},
+      {label:'+$250,000',amount:250000,weight:7},
+      {label:'+$500,000',amount:500000,weight:7},
+    ]
+  },
+];
+
+function pickPrize(prizes) {
+  const total = prizes.reduce((s,p)=>s+p.weight,0);
+  let r = Math.random()*total;
+  for (const p of prizes) { r-=p.weight; if(r<=0) return p; }
+  return prizes[prizes.length-1];
+}
+
+function fmt(n) {
+  return '$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+// ══════════════════════════════════════════════════════════════
+// RENDER TICKETS
+// ══════════════════════════════════════════════════════════════
+function renderTickets() {
+  const grid = document.getElementById('tickets-grid');
+  grid.innerHTML = '';
+  TICKETS.forEach(t => {
+    const card = document.createElement('div');
+    card.className = 'ticket-card';
+    card.id = 'card-'+t.id;
+    card.innerHTML = `
+      <div class="ticket-head">
+        <div>
+          <div class="ticket-icon">${t.icon}</div>
+          <div class="ticket-title">${t.name}</div>
+          <div class="ticket-tier">${t.tier}</div>
+        </div>
+        <div class="ticket-badge">${fmt(t.price)}</div>
+      </div>
+      <div class="ticket-body">
+        <p class="ticket-desc">${t.desc}</p>
+        <p class="ticket-maxwin">Gain maximum : <span>${t.maxWin}</span></p>
+        <div class="scratch-wrap" id="sw-${t.id}" style="height:115px;"></div>
+        <p class="scratch-hint" id="hint-${t.id}">↑ Grattez après avoir acheté le ticket</p>
+      </div>
+      <div class="ticket-footer">
+        <button class="buy-ticket-btn" id="btn-${t.id}" onclick="buyTicket('${t.id}')">
+          ◆ ACHETER — ${fmt(t.price)}
+        </button>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function buyTicket(tid) {
+  const user = currentUser();
+  if (!user) return;
+  const t = TICKETS.find(x=>x.id===tid);
+  if (!t) return;
+  if (user.balance < t.price) {
+    showToast('❌ Solde insuffisant pour ce ticket.');
+    return;
+  }
+  user.balance -= t.price;
+  user.totalSpent += t.price;
+  saveUser(user);
+  updateGameStats(user);
+
+  const btn = document.getElementById('btn-'+tid);
+  btn.disabled = true;
+  btn.textContent = 'GRATTEZ VOTRE TICKET…';
+
+  const sw = document.getElementById('sw-'+tid);
+  sw.innerHTML = '';
+  const hint = document.getElementById('hint-'+tid);
+  hint.textContent = '↑ Grattez avec votre souris ou votre doigt';
+
+  const prize = pickPrize(t.prizes);
+  requestAnimationFrame(() => buildScratch(sw, prize, t, btn, user));
+}
+
+// ══════════════════════════════════════════════════════════════
+// SCRATCH ENGINE
+// ══════════════════════════════════════════════════════════════
+function buildScratch(container, prize, ticketData, btnEl, user) {
+  const W = container.clientWidth || 280;
+  const H = 115;
+
+  // Reveal layer
+  const reveal = document.createElement('div');
+  reveal.className = 'scratch-reveal';
+  reveal.innerHTML = `
+    <div class="reveal-emoji">${prize.amount>0?'🎉':'😔'}</div>
+    <div class="reveal-amount">${prize.amount>0 ? prize.label : 'Rien'}</div>
+    <div class="reveal-label">${prize.amount>0?'Félicitations !':'Tentez à nouveau…'}</div>
+  `;
+  container.appendChild(reveal);
+
+  // Canvas
+  const canvas = document.createElement('canvas');
+  canvas.className = 'scratch-canvas';
+  canvas.width = W; canvas.height = H;
+  canvas.style.width = '100%'; canvas.style.height = H+'px';
+  container.appendChild(canvas);
+
+  const ctx = canvas.getContext('2d');
+  const grad = ctx.createLinearGradient(0,0,W,H);
+  grad.addColorStop(0,'#6B4C10');
+  grad.addColorStop(.25,'#C9A84C');
+  grad.addColorStop(.5,'#F0D080');
+  grad.addColorStop(.75,'#C9A84C');
+  grad.addColorStop(1,'#8B6010');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0,0,W,H);
+  // texture
+  ctx.strokeStyle='rgba(255,255,255,.07)';ctx.lineWidth=1;
+  for(let i=0;i<W;i+=10){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i,H);ctx.stroke();}
+  for(let i=0;i<H;i+=10){ctx.beginPath();ctx.moveTo(0,i);ctx.lineTo(W,i);ctx.stroke();}
+  ctx.fillStyle='rgba(0,0,0,.3)';
+  ctx.font='bold 14px "Cinzel", serif';
+  ctx.textAlign='center';
+  ctx.fillText('✦ GRATTEZ ICI ✦', W/2, H/2+5);
+
+  ctx.globalCompositeOperation='destination-out';
+
+  let scratching=false, revealed=false, scratchArea=0;
+  const totalArea=W*H;
+
+  const getPos=(e)=>{
+    const rect=canvas.getBoundingClientRect();
+    const sx=canvas.width/rect.width, sy=canvas.height/rect.height;
+    const cx=e.touches?e.touches[0].clientX:e.clientX;
+    const cy=e.touches?e.touches[0].clientY:e.clientY;
+    return{x:(cx-rect.left)*sx, y:(cy-rect.top)*sy};
+  };
+  const scratch=(e)=>{
+    if(!scratching)return; e.preventDefault();
+    const pos=getPos(e);
+    ctx.beginPath(); ctx.arc(pos.x,pos.y,22,0,Math.PI*2); ctx.fill();
+    scratchArea += Math.PI*22*22;
+    if(!revealed && scratchArea/totalArea>.3){
+      revealed=true;
+      setTimeout(()=>ctx.clearRect(0,0,W,H),300);
+      // Update user
+      const u=currentUser();
+      u.balance += prize.amount;
+      u.totalWon += prize.amount;
+      u.ticketsPlayed++;
+      const histEntry={
+        ticket: ticketData.name, prize: prize.label,
+        amount: prize.amount, cost: ticketData.price,
+        time: new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})
+      };
+      u.history.unshift(histEntry);
+      if(u.history.length>50) u.history.pop();
+      saveUser(u);
+      updateGameStats(u);
+      renderHistory(u);
+
+      btnEl.disabled=false;
+      btnEl.textContent='◆ ACHETER UN AUTRE — '+fmt(ticketData.price);
+
+      if(prize.amount>0){
+        const rect=canvas.getBoundingClientRect();
+        spawnSparkles(rect.left+rect.width/2, rect.top+rect.height/2);
+        if(prize.amount>=100000) showToast('🎉 JACKPOT LÉGENDAIRE ! Vous gagnez '+prize.label+' !');
+        else if(prize.amount>=25000) showToast('✨ MAGNIFIQUE ! Vous gagnez '+prize.label+' !');
+        else if(prize.amount>=5000) showToast('💰 Belle victoire ! Vous gagnez '+prize.label+' !');
+        else showToast('🌟 Vous gagnez '+prize.label+' !');
+      } else {
+        showToast('😔 Rien cette fois… Retentez votre chance !');
+      }
+    }
+  };
+
+  canvas.addEventListener('mousedown',e=>{scratching=true;scratch(e);});
+  canvas.addEventListener('mousemove',scratch);
+  window.addEventListener('mouseup',()=>{scratching=false;});
+  canvas.addEventListener('touchstart',e=>{scratching=true;scratch(e);},{passive:false});
+  canvas.addEventListener('touchmove',scratch,{passive:false});
+  canvas.addEventListener('touchend',()=>{scratching=false;});
+}
+
+// ══════════════════════════════════════════════════════════════
+// HISTORY
+// ══════════════════════════════════════════════════════════════
+function renderHistory(user) {
+  const list = document.getElementById('history-list');
+  if(!user.history || user.history.length===0){
+    list.innerHTML='<div style="text-align:center;color:var(--text-muted);font-style:italic;padding:24px;">Aucune partie jouée…</div>';
+    return;
+  }
+  list.innerHTML = user.history.map(h=>`
+    <div class="history-item">
+      <div class="history-left">
+        <span class="history-ticket">${h.ticket}</span>
+        <span class="history-time">${h.time}</span>
+      </div>
+      <span class="history-prize ${h.amount>=50000?'big':h.amount===0?'loss':''}">
+        ${h.amount>0?h.prize:'— Rien —'}
+      </span>
+    </div>
+  `).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+// ADMIN
+// ══════════════════════════════════════════════════════════════
+function refreshAdmin() {
+  const db = getDB();
+  const players = Object.values(db);
+
+  // Stats
+  const totalBalance = players.reduce((s,p)=>s+p.balance,0);
+  const totalWon = players.reduce((s,p)=>s+p.totalWon,0);
+  const totalSpent = players.reduce((s,p)=>s+p.totalSpent,0);
+  const totalTickets = players.reduce((s,p)=>s+p.ticketsPlayed,0);
+  const playerCount = players.filter(p=>p.role!=='admin').length;
+
+  document.getElementById('admin-stats').innerHTML = `
+    <div class="admin-stat"><span class="v">${playerCount}</span><span class="l">Joueurs inscrits</span></div>
+    <div class="admin-stat"><span class="v">${fmt(totalBalance)}</span><span class="l">Soldes cumulés</span></div>
+    <div class="admin-stat"><span class="v">${fmt(totalSpent)}</span><span class="l">Dépenses totales</span></div>
+    <div class="admin-stat"><span class="v">${fmt(totalWon)}</span><span class="l">Gains distribués</span></div>
+    <div class="admin-stat"><span class="v">${totalTickets}</span><span class="l">Tickets joués</span></div>
+    <div class="admin-stat"><span class="v">${totalSpent>0?((1-totalWon/totalSpent)*100).toFixed(1):'0.0'}%</span><span class="l">Marge staff</span></div>
+  `;
+
+  // Table
+  const tbody = document.getElementById('players-tbody');
+  tbody.innerHTML = players.sort((a,b)=>b.balance-a.balance).map(u=>`
+    <tr>
+      <td>${u.name}</td>
+      <td class="td-id">${u.id}</td>
+      <td>${u.age}</td>
+      <td><span class="${u.role==='admin'?'td-role-admin':'td-role-player'}">${u.role==='admin'?'ADMIN':'Joueur'}</span></td>
+      <td class="td-balance">${fmt(u.balance)}</td>
+      <td>${u.ticketsPlayed}</td>
+      <td>${fmt(u.totalWon)}</td>
+      <td>${fmt(u.totalSpent)}</td>
+      <td>
+        <div class="table-actions">
+          <button class="action-btn action-add" onclick="quickAddFunds('${u.id}')">+Fonds</button>
+          ${u.role!=='admin'?`<button class="action-btn action-admin" onclick="toggleAdmin('${u.id}')">Admin</button>`:''}
+          ${u.id!=='admin'?`<button class="action-btn action-del" onclick="deletePlayer('${u.id}')">Supprimer</button>`:''}
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function toggleAdmin(id) {
+  const db = getDB();
+  if (!db[id]) return;
+  db[id].role = db[id].role==='admin'?'player':'admin';
+  saveDB(db);
+  refreshAdmin();
+  showToast('Rôle modifié pour ' + db[id].name);
+}
+
+function deletePlayer(id) {
+  if (!confirm('Supprimer définitivement ce joueur ?')) return;
+  const db = getDB();
+  delete db[id];
+  saveDB(db);
+  refreshAdmin();
+  showToast('Joueur supprimé.');
+}
+
+function openAddFunds() {
+  const db = getDB();
+  const sel = document.getElementById('funds-player-select');
+  sel.innerHTML = Object.values(db).map(u=>`<option value="${u.id}">${u.name} (${u.id}) — ${fmt(u.balance)}</option>`).join('');
+  document.getElementById('modal-funds').classList.add('open');
+}
+
+function quickAddFunds(id) {
+  const db = getDB();
+  const sel = document.getElementById('funds-player-select');
+  const opts = Object.values(db).map(u=>`<option value="${u.id}" ${u.id===id?'selected':''}>${u.name} (${u.id}) — ${fmt(u.balance)}</option>`).join('');
+  sel.innerHTML = opts;
+  document.getElementById('modal-funds').classList.add('open');
+}
+
+function addFundsToPlayer() {
+  const id = document.getElementById('funds-player-select').value;
+  const amount = parseFloat(document.getElementById('funds-amount').value);
+  if (!id || isNaN(amount) || amount <= 0) { showToast('❌ Montant invalide.'); return; }
+  const db = getDB();
+  if (!db[id]) return;
+  db[id].balance += amount;
+  saveDB(db);
+  closeModal('modal-funds');
+  refreshAdmin();
+  showToast('✅ ' + fmt(amount) + ' ajoutés à ' + db[id].name);
+  // If current user is admin playing
+  const u = currentUser();
+  if (u && u.id === id) updateGameStats(db[id]);
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+// ══════════════════════════════════════════════════════════════
+// UI HELPERS
+// ══════════════════════════════════════════════════════════════
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+function spawnSparkles(x, y) {
+  const emojis=['✨','💛','⭐','🌟','💰','🎊','💎'];
+  for(let i=0;i<8;i++){
+    const el=document.createElement('div');
+    el.className='sparkle';
+    el.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+    el.style.left=(x+(Math.random()-.5)*120)+'px';
+    el.style.top=(y+(Math.random()-.5)*100)+'px';
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),1000);
+  }
+}
+
+// Close modal on bg click
+document.getElementById('modal-funds').addEventListener('click',function(e){
+  if(e.target===this) closeModal('modal-funds');
+});
+
+// ══════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════
+initDB();
+const sess = getSession();
+if (sess) {
+  const db = getDB();
+  const user = db[sess.id];
+  if (user) {
+    enterApp(user);
+  } else {
+    showScreen('auth');
+  }
+} else {
+  showScreen('auth');
+}
+</script>
+</body>
+</html>
